@@ -31,6 +31,28 @@ def extract_zips(outer_file):
     
     return all_data
 
+
+def create_timestamp(df):
+    """
+    Creates a timeseries column and assigns it to the index.
+    """
+    import pandas as pd
+
+    # Convert 'date' column to datetime object
+    df['date'] = pd.to_datetime(df['date'], format='%m/%d/%Y')
+
+    # Add 'hour' to 'date'
+    df['timestamp'] = df['date'] + pd.to_timedelta(df['hour'], unit='h')
+
+    # Set timestamp as index
+    df.set_index('timestamp', inplace=True)
+
+    # Drop columns not needed
+    df.drop(columns=['date', 'hour'], inplace=True, errors='ignore')    
+
+    return df
+
+
 def extract_wind():
     import pandas as pd
 
@@ -40,9 +62,17 @@ def extract_wind():
             'wind_south', 'x', 'x', 'x', 'wind_west', 'x', 'x', 'x', 'wind_north', 'x', 'x', 'x', 'x']
 
     # Combine all 48-row chunks into one DataFrame
-    final_df = pd.concat(all_data, ignore_index=True)
-    final_df.columns = cols
-    final_df = final_df.loc[:, final_df.columns != 'x']
+    df = pd.concat(all_data, ignore_index=True)
+
+    # Drop unnecessary columns
+    df.columns = cols
+    df = df.loc[:, df.columns != 'x']
+
+    # Create timeseries index column
+    final_df = create_timestamp(df)
+
+    # Stop data at 2023-12-31
+    final_df = final_df[final_df.index <= pd.to_datetime('2023-12-31 23:00:00')]
 
     print("Complied ERCOT Wind Generation data into a DataFrame")
 
@@ -55,12 +85,20 @@ def extract_solar():
 
     cols = ['date', 'hour', 'solar_system', 'x', 'x', 'x', 'solar_centerwest', 'x', 'x', 'x', 'solar_northwest', 
             'x', 'x', 'x', 'solar_farwest', 'x', 'x', 'x', 'solar_fareast', 'x', 'x', 'x', 'solar_southeast', 
-            'x', 'x', 'x', 'solar_centereast', 'x', 'x', 'x', 'x', 'x']
+            'x', 'x', 'x', 'solar_centereast', 'x', 'x', 'x', 'x']
 
     # Combine all 48-row chunks into one DataFrame
-    final_df = pd.concat(all_data, ignore_index=True)
-    final_df.columns = cols
-    final_df = final_df.loc[:, final_df.columns != 'x']
+    df = pd.concat(all_data, ignore_index=True)
+
+    # Drop unnecessary columns
+    df.columns = cols
+    df = df.loc[:, df.columns != 'x']
+
+    # Create timeseries index column
+    final_df = create_timestamp(df)
+
+    # Stop data at 2023-12-31
+    final_df = final_df[final_df.index <= pd.to_datetime('2023-12-31 23:00:00')]
 
     print("Complied ERCOT Solar Generation data into a DataFrame")
 
