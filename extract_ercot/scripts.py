@@ -1,8 +1,10 @@
+import os
+import zipfile
+import pandas as pd
+from io import BytesIO
+from datetime import timedelta
+
 def extract_zips(outer_file):
-    import os
-    import zipfile
-    import pandas as pd
-    from io import BytesIO
 
     # List to collect all data
     all_data = []
@@ -36,7 +38,6 @@ def create_timestamp(df):
     """
     Creates a timeseries column and assigns it to the index.
     """
-    import pandas as pd
 
     # Convert 'date' column to datetime object
     df['date'] = pd.to_datetime(df['date'], format='%m/%d/%Y')
@@ -54,7 +55,6 @@ def create_timestamp(df):
 
 
 def extract_wind():
-    import pandas as pd
 
     all_data = extract_zips("wind_zips")
 
@@ -79,7 +79,6 @@ def extract_wind():
     return final_df
 
 def extract_solar():
-    import pandas as pd
 
     all_data = extract_zips("solar_zips")
 
@@ -105,4 +104,45 @@ def extract_solar():
     return final_df
 
 
-        
+def shift_timestamps(df, col):
+    
+    def fix_and_shift(dt_str):
+        if '24:00' in dt_str:
+            # Replace 24:00 with 00:00 and go to next day
+            base = pd.to_datetime(dt_str.replace('24:00', '00:00'))
+            return base + timedelta(days=1) - timedelta(hours=1)
+        else:
+            return pd.to_datetime(dt_str) - timedelta(hours=1)
+    
+    df['timestamp'] = df[col].apply(fix_and_shift)
+    
+    return df
+
+
+def extract_load(filepaths):
+    
+    all_data = []
+    cols = ['timestamp', 'coast', 'east', 'farwest', 'north', 'northcentral', 'south', 'southcentral', 'west', 'system']
+
+    for path in filepaths:
+        df = pd.read_csv(path)
+        all_data.append(df)
+
+    # Combine into one DataFrame
+    df = pd.concat(all_data, ignore_index=True)
+
+    # Rename columns
+    df.columns = cols
+
+    # Create timeseries index column
+    df = shift_timestamps(df, 'timestamp')
+
+    # Create timeseries index column
+    df['timestamp'] = pd.to_datetime(df['timestamp'], format='mixed', dayfirst=False)
+    df.set_index('timestamp', inplace=True)
+
+
+    return df
+
+
+    
