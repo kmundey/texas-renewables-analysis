@@ -16,9 +16,10 @@ def extract_zips(outer_file):
             
             with zipfile.ZipFile(zip_path, 'r') as top_zip:  # Open top-level ZIP
                 
-                for nested_zip_name in top_zip.namelist():
-                    if nested_zip_name.endswith(".zip"):
-                        nested_zip_bytes = BytesIO(top_zip.read(nested_zip_name))  # Read nested zip into memory
+                for inner_file in top_zip.namelist():
+
+                    if inner_file.endswith(".zip"):
+                        nested_zip_bytes = BytesIO(top_zip.read(inner_file))  # Read nested zip into memory
 
                         with zipfile.ZipFile(nested_zip_bytes, 'r') as nested_zip:
                             
@@ -30,6 +31,15 @@ def extract_zips(outer_file):
                                             all_data.append(df)
                                         except Exception as e:
                                             print(f"Failed to read {csv_name} in {filename}: {e}")
+                    
+                    # It's a CSV directly in the top-level zip
+                    elif inner_file.lower().endswith(".csv"): 
+                        with top_zip.open(inner_file) as csv_file:
+                            try:
+                                df = pd.read_csv(csv_file, skiprows=1, nrows=48, header=None)
+                                all_data.append(df)
+                            except Exception as e:
+                                print(f"Failed to read {inner_file} in {filename}: {e}")
     
     return all_data
 
@@ -48,6 +58,8 @@ def create_timestamp(df):
     # Set timestamp as index
     df.set_index('timestamp', inplace=True)
 
+    df = df.sort_index()
+
     # Drop columns not needed
     df.drop(columns=['date', 'hour'], inplace=True, errors='ignore')    
 
@@ -56,7 +68,7 @@ def create_timestamp(df):
 
 def extract_wind():
 
-    all_data = extract_zips("wind_zips")
+    all_data = extract_zips("wind_generation_zips")
 
     cols = ['date', 'hour', 'wind_system', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'wind_coast', 'x', 'x', 'x', 
             'wind_south', 'x', 'x', 'x', 'wind_west', 'x', 'x', 'x', 'wind_north', 'x', 'x', 'x', 'x']
@@ -68,11 +80,15 @@ def extract_wind():
     df.columns = cols
     df = df.loc[:, df.columns != 'x']
 
+    # Remove any duplicates
+    df = df.drop_duplicates()
+
     # Create timeseries index column
     final_df = create_timestamp(df)
 
     # Stop data at 2023-12-31
     final_df = final_df[final_df.index <= pd.to_datetime('2023-12-31 23:00:00')]
+
 
     print("Complied ERCOT Wind Generation data into a DataFrame")
 
@@ -80,7 +96,7 @@ def extract_wind():
 
 def extract_solar():
 
-    all_data = extract_zips("solar_zips")
+    all_data = extract_zips("solar_generation_zips")
 
     cols = ['date', 'hour', 'solar_system', 'x', 'x', 'x', 'solar_centerwest', 'x', 'x', 'x', 'solar_northwest', 
             'x', 'x', 'x', 'solar_farwest', 'x', 'x', 'x', 'solar_fareast', 'x', 'x', 'x', 'solar_southeast', 
