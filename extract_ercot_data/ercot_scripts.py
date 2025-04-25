@@ -66,15 +66,23 @@ def create_timestamp(df):
     return df
 
 
-def extract_wind():
+def extract_wind(filename):
 
-    all_data = extract_zips("wind_generation_zips")
-
-    cols = ['date', 'hour', 'wind_system', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'wind_coast', 'x', 'x', 'x', 
-            'wind_south', 'x', 'x', 'x', 'wind_west', 'x', 'x', 'x', 'wind_north', 'x', 'x', 'x', 'x']
+    all_data = extract_zips(filename)
 
     # Combine all 48-row chunks into one DataFrame
     df = pd.concat(all_data, ignore_index=True)
+
+    if 'validation' not in filename:
+        cols = ['date', 'hour', 'wind_system', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'wind_coast', 'x', 'x', 'x', 
+                'wind_south', 'x', 'x', 'x', 'wind_west', 'x', 'x', 'x', 'wind_north', 'x', 'x', 'x', 'x']
+        
+    elif 'validation' in filename:
+        cols = ['date', 'hour', 'wind_system', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'wind_coastal', 'x', 'x', 'x', 
+                'wind_south', 'x', 'x', 'x', 'wind_west', 'x', 'x', 'x', 'wind_north', 'x', 'x', 'x', 'x', 'x']
+
+    # Drop empty rows
+    df = df.dropna()
 
     # Drop unnecessary columns
     df.columns = cols
@@ -86,13 +94,10 @@ def extract_wind():
     # Create timeseries index column
     final_df = create_timestamp(df)
 
-    # Stop data at 2023-12-31
-    final_df = final_df[final_df.index <= pd.to_datetime('2023-12-31 23:00:00')]
-
-
     print("Complied ERCOT Wind Generation data into a DataFrame")
 
     return final_df
+
 
 def extract_solar():
 
