@@ -1,16 +1,21 @@
 # **Texas Renewable Generation Project**
 *Final project repository for I 320M*
 
-### **I. Data Extraction**
-...
+## **I. Data Extraction**
 
-### **II. Dataset Details**
-#### a. Data Sources
-- Electric Reliability Council of Texas (ERCOT): historical renewable power generation data (wind and solar)
-- European Centre for Medium-Range Weather Forecasts (ERA5): historical wind-related weather conditions
-- National Solar Radiation Data Base (NSRDB): historical solar-related weather conditions data
+#### a. ERCOT Data
+- Electric Reliability Council of Texas (ERCOT)
+- Historical renewable power generation data (wind and solar)
 
-#### b. Cleaned Datasets
+#### b. ERA5 Data
+- European Centre for Medium-Range Weather Forecasts (ERA5)
+- Historical wind-related weather conditions
+
+#### c. NSRDB Data
+- National Solar Radiation Data Base (NSRDB)
+- Historical solar-related weather conditions data
+
+#### d. Cleaned Datasets
 - era5_validation_wind_conditions_data.csv
 - era5_wind_conditions_data.csv
 - ercot_grid_load_data.csv
@@ -20,7 +25,10 @@
 - nsrdb_solar_conditions_data_by_city.csv
 - nsrdb_solar_conditions_data_by_region.csv
 
-### **III. Katherine & Kayla: Wind Generation**
+## **III. Katherine & Kayla: Wind Generation**
+
+[Wind Data Analysis & Generation Forecasting Presentation Slides](https://docs.google.com/presentation/d/1TK-kIXhdPX2I4-8dliGmBrolojeLi4EfbT6sDtHG04s/edit?usp=sharing)
+
 #### a. Data Analysis and Visualization
 ...
 #### b. Deep Learning to Forecast Wind Generation: 1D CNN
