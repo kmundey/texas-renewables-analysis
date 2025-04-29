@@ -6,13 +6,20 @@
 - European Centre for Medium-Range Weather Forecasts (ERA5): Historical wind-related weather conditions
 - National Solar Radiation Data Base (NSRDB): Historical solar-related weather conditions data
 
-## **III. Katherine & Kayla: Wind Generation**
+## **III. Short-Term Wind Power Forecasting for ERCOT: A Convolutional Neural Network Approach**
+*Katherine & Kayla*
 
-[Wind Data Analysis & Generation Forecasting Presentation Slides](https://docs.google.com/presentation/d/1TK-kIXhdPX2I4-8dliGmBrolojeLi4EfbT6sDtHG04s/edit?usp=sharing)
+[Presentation Slides](https://docs.google.com/presentation/d/1TK-kIXhdPX2I4-8dliGmBrolojeLi4EfbT6sDtHG04s/edit?usp=sharing)
 
-#### a. Data Analysis and Visualization
-...
-#### b. Deep Learning to Forecast Wind Generation: 1D CNN
+[Report](https://docs.google.com/document/d/18foUTwQ0_6GvCXHzqPOnypqigv-xFI-WK5xJTTFsrlE/edit?usp=sharing)
+
+Texas is the leading producer of wind energy in the United States, generating approximately 40,652 MW in 2023, which represented 28.6% of Texas’ total energy mix. Texas’s wind energy sector continues to grow rapidly, with total capacity increasing from around 10,000 megawatts in 2011 to over 40,000 megawatts in 2022. Texas wind plays a vital role in meeting the state’s increasing electricity demands and supporting economic development. As wind becomes an even larger share of Texas’s energy mix, understanding and analyzing wind patterns and generation trends is crucial to ensure reliable, efficient, and sustainable energy delivery. 
+
+Components: 
+- Data Analysis and Visualization
+- Deep Learning Wind Generation Forecasting Model
+
+**Deep Learning to Forecast Wind Generation: 1D CNN**
 The `wind_analysis` folder contains a deep learning model built to forecast hourly wind power generation (MW) for ERCOT using historical wind generation data from ERCOT and weather conditions data from ERA5. The forecasted output predicts the next hour of wind power generation based on time-series data spanning from January 1, 2021, to December 31, 2023.
 
 **Key Features**
